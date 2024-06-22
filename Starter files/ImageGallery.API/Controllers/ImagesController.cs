@@ -93,13 +93,15 @@ namespace ImageGallery.API.Controllers
             // be fixed during the course
             //imageEntity.OwnerId = ...;
 
-            //set the ownerId on the imageEntity
-            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            // set the ownerId on the imageEntity
+            var ownerId = User.Claims
+                .FirstOrDefault(c => c.Type == "sub")?.Value;
             if (ownerId == null)
             {
                 throw new Exception("User identifier is missing from token.");
             }
             imageEntity.OwnerId = ownerId;
+
 
             // add and save.  
             _galleryRepository.AddImage(imageEntity);
