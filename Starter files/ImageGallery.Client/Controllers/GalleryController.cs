@@ -1,14 +1,14 @@
 ﻿using System.Text;
 using ImageGallery.Client.ViewModels;
 using ImageGallery.Model;
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace ImageGallery.Client.Controllers
-{   
+{
     [Authorize]
     public class GalleryController : Controller
     {
@@ -129,7 +129,7 @@ namespace ImageGallery.Client.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles="Paying User")]
+        [Authorize(Roles = "PayingUser")]
         public IActionResult AddImage()
         {
             return View();
@@ -137,7 +137,7 @@ namespace ImageGallery.Client.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles="Paying User")]
+        [Authorize(Roles = "PayingUser")]
         public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
         {
             if (!ModelState.IsValid)
@@ -187,9 +187,17 @@ namespace ImageGallery.Client.Controllers
 
         public async Task LogIdentityInformation()
         {
-            var identityToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+            // get the saved identity token
+            var identityToken = await HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+
+            // get the saved access token
+            var accessToken = await HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+
             var userClaimsStringBuilder = new StringBuilder();
-            foreach(var claim in User.Claims)
+            foreach (var claim in User.Claims)
             {
                 userClaimsStringBuilder.AppendLine(
                     $"Claim Type: {claim.Type} - Claim Value: {claim.Value}");
@@ -197,6 +205,8 @@ namespace ImageGallery.Client.Controllers
 
             _logger.LogInformation(
                 $"Identity Token & user claims: \n{identityToken}\n\nUser Claims:\n{userClaimsStringBuilder}");
+
+            _logger.LogInformation($"Access Token: \n{accessToken}");
 
         }
     }
