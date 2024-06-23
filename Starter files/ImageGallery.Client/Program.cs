@@ -1,3 +1,4 @@
+using ImageGallery.API.Authorization;
 using ImageGallery.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
-    .AddJsonOptions(configure => 
+    .AddJsonOptions(configure =>
         configure.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -49,7 +50,8 @@ builder.Services.AddAuthentication(options =>
         options.ClaimActions.DeleteClaim("sid");
         options.ClaimActions.DeleteClaim("idp");
         options.Scope.Add("roles");
-        options.Scope.Add("imagegalleryapi.fullaccess");
+        options.Scope.Add("imagegalleryapi.read");
+        options.Scope.Add("imagegalleryapi.write");
         options.Scope.Add("country");
         options.ClaimActions.MapJsonKey("role", "role");
         options.ClaimActions.MapUniqueJsonKey("country", "country");
@@ -62,8 +64,19 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(authorizationOptions =>
 {
-    authorizationOptions.AddPolicy("UserCanAddImage", 
+    authorizationOptions.AddPolicy("UserCanAddImage",
         AuthorizationPolicies.CanAddImage());
+
+    authorizationOptions.AddPolicy("ClientApplicationCanWrite", policyBuilder =>
+    {
+        policyBuilder.RequireClaim("scope", "imagegalleryapi.write");
+    });
+
+    authorizationOptions.AddPolicy("MustOwnImage", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.AddRequirements(new MustOwnImageRequirement());
+    });
 });
 
 var app = builder.Build();
