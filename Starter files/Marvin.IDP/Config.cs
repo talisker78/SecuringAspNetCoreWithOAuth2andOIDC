@@ -30,7 +30,8 @@ public static class Config
                     "imagegalleryapi.fullaccess",
                     "imagegalleryapi.read",
                     "imagegalleryapi.write"
-                }
+                },
+                ApiSecrets = { new Secret("apisecret".Sha256())}
             }
         };
 
@@ -51,7 +52,14 @@ public static class Config
                 ClientName = "Image Gallery",
                 ClientId = "imagegalleryclient",
                 AllowedGrantTypes = GrantTypes.Code,
-                RequirePkce = true,
+                AccessTokenType = AccessTokenType.Reference,
+                AllowOfflineAccess = true,
+                UpdateAccessTokenClaimsOnRefresh = true,
+
+                RequirePkce = true,  // Default for PKCE is true
+                AccessTokenLifetime = 120, // Default is 3600 seconds / 1 hour
+                IdentityTokenLifetime = 300, // Default is 300 seconds / 5 minutes
+                AuthorizationCodeLifetime = 300, // Default is 300 seconds / 5 minutes
                 RedirectUris = new List<string>()
                 {
                     "https://localhost:7184/signin-oidc"

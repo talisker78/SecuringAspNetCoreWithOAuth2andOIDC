@@ -196,6 +196,9 @@ namespace ImageGallery.Client.Controllers
             var accessToken = await HttpContext
                 .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
 
+            // get the refresh token
+            var refreshToken = await HttpContext
+                .GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
 
             var userClaimsStringBuilder = new StringBuilder();
             foreach (var claim in User.Claims)
@@ -209,6 +212,7 @@ namespace ImageGallery.Client.Controllers
 
             _logger.LogInformation($"Access Token: \n{accessToken}");
 
+            _logger.LogInformation($"Refresh Token: \n{refreshToken}");
         }
     }
 }
