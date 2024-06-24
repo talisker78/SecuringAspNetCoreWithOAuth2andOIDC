@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="ImageGallery.API\ImageGallery.API.csproj" />
+  <Project Path="ImageGallery.Authorization\ImageGallery.Authorization.csproj" />
+  <Project Path="ImageGallery.Model\ImageGallery.Model.csproj" />
+  <Project Path="Marvin.IDP\Marvin.IDP.csproj" />
+  <Properties Name="Visual Studio">
+    <Property Name="OpenWith" Value="17" />
+  </Properties>
+</Solution>
