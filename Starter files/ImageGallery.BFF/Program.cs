@@ -1,8 +1,8 @@
+using Duende.Bff;
+using Duende.Bff.Yarp;
 using ImageGallery.API.Authorization;
 using ImageGallery.Authorization;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.Net.Http.Headers;
 
@@ -11,47 +11,37 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(configure =>
-        configure.JsonSerializerOptions.PropertyNamingPolicy = null);
+    {
+        configure.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
 JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-builder.Services.AddAccessTokenManagement();
+builder.Services.AddBff()
+    .AddRemoteApis();
 
-// create an HttpClient used for accessing the API
-builder.Services.AddHttpClient("APIClient", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ImageGalleryAPIRoot"]);
-    client.DefaultRequestHeaders.Clear();
-    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-}).AddUserAccessTokenHandler();
 
 builder.Services.AddHttpClient("IDPClient", client =>
 {
     client.BaseAddress = new Uri("https://localhost:5001");
 });
 
-
-
+const string bffCookieScheme = "BFFCookieScheme";
+const string bffChallengeScheme = "BFFChallengeScheme";
 
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-    }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-    {
-        options.AccessDeniedPath = "/Authentication/AccessDenied";
+        options.DefaultScheme = bffCookieScheme;
+        options.DefaultChallengeScheme = bffChallengeScheme;
     })
-    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+    .AddCookie(bffCookieScheme)
+    .AddOpenIdConnect(bffChallengeScheme, options =>
     {
-        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.Authority = builder.Configuration["IDPBaseAddress"];
-        options.ClientId = "imagegalleryclient";
-        options.ClientSecret = "secret";
+        options.SignInScheme = bffCookieScheme;
+        options.Authority = "https://localhost:5001";
+        options.ClientId = "imagegallerybff";
+        options.ClientSecret = "anothersecret";
         options.ResponseType = "code";
-        //options.UsePkce = true;
-        //options.Scope.Add("openid");
-        //options.Scope.Add("profile");
-        //options.CallbackPath = new PathString("signin-oidc");
         options.SaveTokens = true;
         options.GetClaimsFromUserInfoEndpoint = true;
         options.ClaimActions.Remove("aud");
@@ -93,7 +83,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler();
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -101,12 +92,15 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapRemoteBffApiEndpoint(
+        "/bff/images", "https://localhost:7075/api/images")
+    .RequireAccessToken(TokenType.User);
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Gallery}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

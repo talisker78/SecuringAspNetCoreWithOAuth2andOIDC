@@ -7,23 +7,23 @@ public static class Config
 {
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
-        { 
+        {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
             new IdentityResource("roles",
                 "Your role(s)",
-                new [] {"role"}),
+                new[] { "role" }),
             new IdentityResource("country",
                 "The country you're living in",
-                new List<string> {"country"})
+                new List<string> { "country" })
         };
 
     public static IEnumerable<ApiResource> ApiResources =>
         new ApiResource[]
         {
-            new ApiResource("imagegalleryapi", 
+            new ApiResource("imagegalleryapi",
                 "Image Gallery API",
-                new [] { "role", "country"})
+                new[] { "role", "country" })
             {
                 Scopes =
                 {
@@ -31,7 +31,7 @@ public static class Config
                     "imagegalleryapi.read",
                     "imagegalleryapi.write"
                 },
-                ApiSecrets = { new Secret("apisecret".Sha256())}
+                ApiSecrets = { new Secret("apisecret".Sha256()) }
             }
         };
 
@@ -56,7 +56,7 @@ public static class Config
                 AllowOfflineAccess = true,
                 UpdateAccessTokenClaimsOnRefresh = true,
 
-                RequirePkce = true,  // Default for PKCE is true
+                RequirePkce = true, // Default for PKCE is true
                 AccessTokenLifetime = 120, // Default is 3600 seconds / 1 hour
                 IdentityTokenLifetime = 300, // Default is 300 seconds / 5 minutes
                 AuthorizationCodeLifetime = 300, // Default is 300 seconds / 5 minutes
@@ -83,6 +83,45 @@ public static class Config
                     new Secret("secret".Sha256())
                 },
                 RequireConsent = true
+            },
+            new Client()
+            {
+                ClientName = "Image Gallery BFF",
+                ClientId = "imagegallerybff",
+                AccessTokenType = AccessTokenType.Reference,
+                AllowedGrantTypes = GrantTypes.Code,
+                AllowOfflineAccess = true,
+                UpdateAccessTokenClaimsOnRefresh = true,
+
+                RequirePkce = true, // Default for PKCE is true
+                AccessTokenLifetime = 120, // Default is 3600 seconds / 1 hour
+                IdentityTokenLifetime = 300, // Default is 300 seconds / 5 minutes
+                AuthorizationCodeLifetime = 300, // Default is 300 seconds / 5 minutes
+                RedirectUris = new List<string>()
+                {
+                    "https://localhost:7035/signin-oidc"
+                },
+                PostLogoutRedirectUris = new List<string>()
+                {
+                    "https://localhost:7035/signout-callback-oidc"
+                },
+                AllowedScopes = new List<string>()
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "roles",
+                    //"imagegalleryapi.fullaccess",
+                    "imagegalleryapi.read",
+                    "imagegalleryapi.write",
+                    "country"
+                },
+                ClientSecrets = new List<Secret>()
+                {
+                    new Secret("anothersecret".Sha256())
+                },
+                RequireConsent = true
             }
+
         };
-}
+};
+
