@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Marvin.IDP", "Marvin.IDP\Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGallery.Authorization", "ImageGallery.Authorization\ImageGallery.Authorization.csproj", "{65403ECC-732A-47D9-B1FD-65CEBADC639B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGallery.BFF", "ImageGallery.BFF\ImageGallery.BFF.csproj", "{914CA9C2-8F28-49F0-94EB-DDEE6941E166}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageGallery.Client", "ImageGallery.Client\ImageGallery.Client.csproj", "{E4EDBFAC-4AE8-4EE0-9415-3987F44E8ACF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{65403ECC-732A-47D9-B1FD-65CEBADC639B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65403ECC-732A-47D9-B1FD-65CEBADC639B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65403ECC-732A-47D9-B1FD-65CEBADC639B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{914CA9C2-8F28-49F0-94EB-DDEE6941E166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{914CA9C2-8F28-49F0-94EB-DDEE6941E166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{914CA9C2-8F28-49F0-94EB-DDEE6941E166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{914CA9C2-8F28-49F0-94EB-DDEE6941E166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4EDBFAC-4AE8-4EE0-9415-3987F44E8ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4EDBFAC-4AE8-4EE0-9415-3987F44E8ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4EDBFAC-4AE8-4EE0-9415-3987F44E8ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4EDBFAC-4AE8-4EE0-9415-3987F44E8ACF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
