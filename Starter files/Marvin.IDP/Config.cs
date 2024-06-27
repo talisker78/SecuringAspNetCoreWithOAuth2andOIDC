@@ -82,7 +82,7 @@ public static class Config
                 {
                     new Secret("secret".Sha256())
                 },
-                RequireConsent = true
+                //RequireConsent = true
             },
             new Client()
             {
