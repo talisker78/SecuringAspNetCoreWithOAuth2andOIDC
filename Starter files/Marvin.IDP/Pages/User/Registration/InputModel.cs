@@ -46,6 +46,10 @@ namespace Marvin.IDP.Pages.User.Registration
             }, 
                 "Id", 
                 "Value");
-
+        [Required]
+        [MaxLength(250)]
+        [Display(Name = "Email")]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }

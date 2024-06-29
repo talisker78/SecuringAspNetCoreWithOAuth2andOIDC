@@ -1,4 +1,6 @@
-﻿using Marvin.IDP.DbContexts;
+﻿using System.Security.Cryptography;
+using IdentityModel.Client;
+using Marvin.IDP.DbContexts;
 using Marvin.IDP.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +38,26 @@ namespace Marvin.IDP.Services
             }
 
             return user.Active;
+        }
+
+        public async Task<bool> ActivateUserAsync(string securityCode)
+        {
+            if(string.IsNullOrWhiteSpace(securityCode))
+            {
+                throw new ArgumentNullException(nameof(securityCode));
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => 
+                u.SecurityCode == securityCode &&
+                u.SecurityCodeExpirationDate >= DateTime.Now);
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Active = true;
+            user.SecurityCode = null;
+            return true;
         }
 
         public async Task<bool> ValidateCredentialsAsync(string userName,
@@ -110,6 +132,16 @@ namespace Marvin.IDP.Services
                 // return this as a validation issue
                 throw new Exception("Username must be unique");
             }
+
+            if (_context.Users.Any(u => u.Email == userToAdd.Email))
+            {
+                throw new Exception("Email must be unique");
+            }
+
+            userToAdd.SecurityCode = Convert.ToBase64String(
+                RandomNumberGenerator.GetBytes(128));
+
+            userToAdd.SecurityCodeExpirationDate = DateTime.Now.AddHours(1);
 
             userToAdd.Password = _passwordHasher.HashPassword(userToAdd, password);
 
