@@ -70,7 +70,7 @@ namespace ImageGallery.Client.Controllers
 
         public IActionResult AccessDenied()
         {
-            return View();
+            return Empty;
         }
     }
 }
